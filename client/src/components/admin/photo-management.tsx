@@ -1,0 +1,197 @@
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Trash2, Upload, Image } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { type Gallery, type Photo } from "@shared/schema";
+
+export default function PhotoManagement() {
+  const [selectedGalleryId, setSelectedGalleryId] = useState<string>("");
+  const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
+  const { toast } = useToast();
+
+  const { data: galleries } = useQuery<Gallery[]>({
+    queryKey: ["/api/galleries"],
+  });
+
+  const { data: photos, isLoading: photosLoading } = useQuery<Photo[]>({
+    queryKey: ["/api/galleries", selectedGalleryId, "photos"],
+    enabled: !!selectedGalleryId,
+  });
+
+  const uploadPhotosMutation = useMutation({
+    mutationFn: async (formData: FormData) => {
+      const response = await fetch(`/api/galleries/${selectedGalleryId}/photos`, {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/galleries", selectedGalleryId, "photos"] });
+      toast({
+        title: "Photos uploaded",
+        description: `${data.length} photos uploaded successfully`,
+      });
+      setSelectedFiles(null);
+      // Reset file input
+      const fileInput = document.getElementById('photoUpload') as HTMLInputElement;
+      if (fileInput) fileInput.value = '';
+    },
+    onError: () => {
+      toast({
+        title: "Upload failed",
+        description: "Failed to upload photos. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deletePhotoMutation = useMutation({
+    mutationFn: async (photoId: string) => {
+      await apiRequest("DELETE", `/api/photos/${photoId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/galleries", selectedGalleryId, "photos"] });
+      toast({
+        title: "Photo deleted",
+        description: "Photo has been deleted successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete photo",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedFiles(e.target.files);
+  };
+
+  const handleUpload = () => {
+    if (!selectedFiles || !selectedGalleryId) {
+      toast({
+        title: "Missing information",
+        description: "Please select gallery and files",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    Array.from(selectedFiles).forEach((file) => {
+      formData.append('photos', file);
+    });
+
+    uploadPhotosMutation.mutate(formData);
+  };
+
+  const handleDeletePhoto = (photoId: string, originalName: string) => {
+    if (confirm(`Are you sure you want to delete "${originalName}"?`)) {
+      deletePhotoMutation.mutate(photoId);
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-xl font-light">Photo Management</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Gallery selection */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Select Gallery</label>
+          <Select value={selectedGalleryId} onValueChange={setSelectedGalleryId}>
+            <SelectTrigger>
+              <SelectValue placeholder="Choose a gallery" />
+            </SelectTrigger>
+            <SelectContent>
+              {galleries?.map((gallery) => (
+                <SelectItem key={gallery.id} value={gallery.id}>
+                  {gallery.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Photo upload */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Upload Photos</label>
+          <Input
+            id="photoUpload"
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={handleFileSelect}
+            disabled={!selectedGalleryId}
+          />
+          {selectedFiles && (
+            <p className="text-sm text-gray-600">
+              {selectedFiles.length} file(s) selected
+            </p>
+          )}
+          <Button
+            onClick={handleUpload}
+            disabled={!selectedFiles || !selectedGalleryId || uploadPhotosMutation.isPending}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Upload className="mr-2 h-4 w-4" />
+            {uploadPhotosMutation.isPending ? "Uploading..." : "Upload Photos"}
+          </Button>
+        </div>
+
+        {/* Photo list */}
+        {selectedGalleryId && (
+          <div className="space-y-2">
+            <h4 className="font-medium">Photos in Gallery</h4>
+            {photosLoading ? (
+              <div className="grid grid-cols-3 gap-2">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="aspect-square bg-gray-200 animate-pulse rounded"></div>
+                ))}
+              </div>
+            ) : photos && photos.length > 0 ? (
+              <div className="grid grid-cols-3 gap-2 max-h-60 overflow-y-auto">
+                {photos.map((photo) => (
+                  <div key={photo.id} className="relative group">
+                    <img
+                      src={photo.url}
+                      alt={photo.originalName}
+                      className="w-full aspect-square object-cover rounded border"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded flex items-center justify-center">
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeletePhoto(photo.id, photo.originalName)}
+                        disabled={deletePhotoMutation.isPending}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <Image className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                <p>No photos in this gallery</p>
+              </div>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
