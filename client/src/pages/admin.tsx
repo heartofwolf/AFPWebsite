@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import LoginForm from "@/components/admin/login-form";
 import GalleryManagement from "@/components/admin/gallery-management";
 import PhotoManagement from "@/components/admin/photo-management";
+import PasswordChange from "@/components/admin/password-change";
 import { Link } from "wouter";
 import { ArrowLeft } from "lucide-react";
 
@@ -61,7 +62,10 @@ export default function Admin() {
 
       <div className="container mx-auto px-6 py-8">
         <div className="grid lg:grid-cols-2 gap-8">
-          <GalleryManagement />
+          <div className="space-y-8">
+            <GalleryManagement />
+            <PasswordChange />
+          </div>
           <PhotoManagement />
         </div>
       </div>

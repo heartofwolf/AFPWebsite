@@ -42,10 +42,11 @@ Preferred communication style: Simple, everyday language.
 
 ### Admin Portal Features
 1. **Password Protection**: Simple password authentication (default: 100301)
-2. **Gallery Management**: Create, delete, and reorder galleries
-3. **Photo Management**: Upload photos (single/bulk), delete, and drag-drop reordering
-4. **Hero Image Selection**: Set any uploaded photo as the gallery's hero image for main page display
-5. **File Upload System**: Supports JPEG, PNG, GIF, WebP with 50MB limit per file
+2. **Password Management**: Change admin password from within the portal
+3. **Gallery Management**: Create, delete, and reorder galleries
+4. **Photo Management**: Upload photos (single/bulk), delete, and drag-drop reordering
+5. **Hero Image Selection**: Set any uploaded photo as the gallery's hero image for main page display
+6. **File Upload System**: Supports JPEG, PNG, GIF, WebP with 50MB limit per file
 
 ### Gallery Structure
 - Pre-configured galleries: Fashion, Beauty, Travel, Portrait, Conceptual
