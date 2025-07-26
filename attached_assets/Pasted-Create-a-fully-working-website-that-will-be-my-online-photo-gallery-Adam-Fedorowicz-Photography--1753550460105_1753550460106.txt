@@ -1,0 +1,34 @@
+Create a fully working website that will be my online photo gallery - Adam Fedorowicz Photography. 
+
+It will be hosted on the FTP or S3. It will be built and tested offline.
+
+Required elements:
+- full html, css, js or other needed components 
+- Page that users will view (main page)
+- Admin portal where I can manage the websites content 
+
+Layout of the main page:
+- landing page should display one full screen image (/img/bckg.jpg)
+- Top navigation bar should have no background and it should be placed over the background image. 
+- Text should be white, big elegant spacing, simple modern font.
+- Elements of the top bar: gallery (dropdown of the galleries list), about me, contact.
+- On hover over top bar menu items text should change the color to gold. Nice animation on hover and click.
+- When page is scrolled down, below the landing page section should be the galleries. Displayed with one hero image for each. Hero images should be square, four galleries in a row. Row should have 100% width. No distance between squares.
+- Below should be a section for about me. The story of my photography journey and career.
+- Below the section for contact.
+- At the end the bar with social media links.
+- Top menu bar should be displayed only over the landing section. When user scroll down to other sections top menu bar should be replaced with a small hamburger menu in white color.
+- Websites design should be simple but modern and functional. White, black with small elegant and simple gold accents.
+- When user clicks on the gallery hero item or select the gallery from the menu dropdown, new page should be opened with photos belonging to the gallery. 
+- Inside of the gallery photos should be displayed to fit the width or height of the screen. Scroll vertical. Margin around photos - 1% of the screen.
+- Option to go back to the main page.
+- Pre existing galleries - Fashion, Beauty, Travel, Portrait, Conceptual.
+
+Admin portal:
+- should be accessible only be me( password protected) temporary password- 100301 with an option to change it.
+- Options: create galleries
+- Remove galleries 
+- Change the order of galleries
+- Upload photos to selected galleries. ( one by one and in bulk)
+- Remove photos
+- Change the order of photos by drag and drop.
