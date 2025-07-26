@@ -44,7 +44,8 @@ Preferred communication style: Simple, everyday language.
 1. **Password Protection**: Simple password authentication (default: 100301)
 2. **Gallery Management**: Create, delete, and reorder galleries
 3. **Photo Management**: Upload photos (single/bulk), delete, and drag-drop reordering
-4. **File Upload System**: Supports JPEG, PNG, GIF, WebP with 10MB limit
+4. **Hero Image Selection**: Set any uploaded photo as the gallery's hero image for main page display
+5. **File Upload System**: Supports JPEG, PNG, GIF, WebP with 50MB limit per file
 
 ### Gallery Structure
 - Pre-configured galleries: Fashion, Beauty, Travel, Portrait, Conceptual

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trash2, Upload, Image } from "lucide-react";
+import { Trash2, Upload, Image, Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { type Gallery, type Photo } from "@shared/schema";
@@ -60,6 +60,7 @@ export default function PhotoManagement() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/galleries", selectedGalleryId, "photos"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/galleries"] });
       toast({
         title: "Photo deleted",
         description: "Photo has been deleted successfully",
@@ -69,6 +70,26 @@ export default function PhotoManagement() {
       toast({
         title: "Error",
         description: "Failed to delete photo",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const setHeroImageMutation = useMutation({
+    mutationFn: async ({ galleryId, photoId }: { galleryId: string; photoId: string }) => {
+      await apiRequest("PUT", `/api/galleries/${galleryId}/hero-image`, { photoId });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/galleries"] });
+      toast({
+        title: "Hero image updated",
+        description: "Gallery hero image has been set successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to set hero image",
         variant: "destructive",
       });
     },
@@ -101,6 +122,14 @@ export default function PhotoManagement() {
       deletePhotoMutation.mutate(photoId);
     }
   };
+
+  const handleSetHeroImage = (photoId: string, originalName: string) => {
+    if (confirm(`Set "${originalName}" as the hero image for this gallery?`)) {
+      setHeroImageMutation.mutate({ galleryId: selectedGalleryId, photoId });
+    }
+  };
+
+  const selectedGallery = galleries?.find(g => g.id === selectedGalleryId);
 
   return (
     <Card>
@@ -153,8 +182,15 @@ export default function PhotoManagement() {
 
         {/* Photo list */}
         {selectedGalleryId && (
-          <div className="space-y-2">
-            <h4 className="font-medium">Photos in Gallery</h4>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <h4 className="font-medium">Photos in Gallery</h4>
+              {selectedGallery?.heroImage && (
+                <p className="text-sm text-gray-600">
+                  Current hero image: <span className="text-green-600">Set</span>
+                </p>
+              )}
+            </div>
             {photosLoading ? (
               <div className="grid grid-cols-3 gap-2">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -163,30 +199,51 @@ export default function PhotoManagement() {
               </div>
             ) : photos && photos.length > 0 ? (
               <div className="grid grid-cols-3 gap-2 max-h-60 overflow-y-auto">
-                {photos.map((photo) => (
-                  <div key={photo.id} className="relative group">
-                    <img
-                      src={photo.url}
-                      alt={photo.originalName}
-                      className="w-full aspect-square object-cover rounded border"
-                    />
-                    <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded flex items-center justify-center">
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDeletePhoto(photo.id, photo.originalName)}
-                        disabled={deletePhotoMutation.isPending}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                {photos.map((photo) => {
+                  const isHeroImage = selectedGallery?.heroImage === photo.url;
+                  return (
+                    <div key={photo.id} className="relative group">
+                      <img
+                        src={photo.url}
+                        alt={photo.originalName}
+                        className={`w-full aspect-square object-cover rounded border-2 ${
+                          isHeroImage ? 'border-gold' : 'border-gray-200'
+                        }`}
+                      />
+                      {isHeroImage && (
+                        <div className="absolute top-2 left-2 bg-gold text-black rounded-full p-1">
+                          <Star className="h-3 w-3 fill-current" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded flex items-center justify-center gap-2">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => handleSetHeroImage(photo.id, photo.originalName)}
+                          disabled={setHeroImageMutation.isPending || isHeroImage}
+                          title="Set as hero image"
+                        >
+                          <Star className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDeletePhoto(photo.id, photo.originalName)}
+                          disabled={deletePhotoMutation.isPending}
+                          title="Delete photo"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <div className="text-center py-8 text-gray-500">
                 <Image className="h-12 w-12 mx-auto mb-2 opacity-50" />
                 <p>No photos in this gallery</p>
+                <p className="text-sm">Upload photos to set a hero image</p>
               </div>
             )}
           </div>

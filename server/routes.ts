@@ -29,7 +29,7 @@ const upload = multer({
     cb(null, allowedTypes.includes(file.mimetype));
   },
   limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB limit
+    fileSize: 50 * 1024 * 1024 // 50MB limit
   }
 });
 
@@ -93,6 +93,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/galleries/:id/hero-image", async (req, res) => {
+    try {
+      const { photoId } = req.body;
+      
+      // Get the photo to use its URL as hero image
+      const photo = await storage.getPhoto(photoId);
+      if (!photo) {
+        return res.status(404).json({ message: "Photo not found" });
+      }
+
+      const gallery = await storage.updateGallery(req.params.id, { 
+        heroImage: photo.url 
+      });
+      
+      if (!gallery) {
+        return res.status(404).json({ message: "Gallery not found" });
+      }
+      
+      res.json(gallery);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update hero image" });
+    }
+  });
+
   // Photo routes
   app.get("/api/galleries/:galleryId/photos", async (req, res) => {
     try {
@@ -103,29 +127,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/galleries/:galleryId/photos", upload.array('photos'), async (req: any, res: any) => {
-    try {
-      if (!req.files || !Array.isArray(req.files)) {
-        return res.status(400).json({ message: "No files uploaded" });
+  app.post("/api/galleries/:galleryId/photos", (req: any, res: any) => {
+    upload.array('photos')(req, res, async (err: any) => {
+      if (err) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+          return res.status(400).json({ message: "File too large. Maximum size is 50MB per file." });
+        }
+        return res.status(400).json({ message: err.message || "Upload failed" });
       }
 
-      const photos = [];
-      for (const file of req.files) {
-        const photoData = {
-          galleryId: req.params.galleryId,
-          filename: file.filename,
-          originalName: file.originalname,
-          url: `/uploads/${file.filename}`,
-          order: Date.now(), // Use timestamp for initial ordering
-        };
-        const photo = await storage.createPhoto(photoData);
-        photos.push(photo);
-      }
+      try {
+        if (!req.files || !Array.isArray(req.files)) {
+          return res.status(400).json({ message: "No files uploaded" });
+        }
 
-      res.status(201).json(photos);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to upload photos" });
-    }
+        const photos = [];
+        for (const file of req.files) {
+          const photoData = {
+            galleryId: req.params.galleryId,
+            filename: file.filename,
+            originalName: file.originalname,
+            url: `/uploads/${file.filename}`,
+            order: Date.now(), // Use timestamp for initial ordering
+          };
+          const photo = await storage.createPhoto(photoData);
+          photos.push(photo);
+        }
+
+        res.status(201).json(photos);
+      } catch (error) {
+        res.status(500).json({ message: "Failed to upload photos" });
+      }
+    });
   });
 
   app.put("/api/photos/:id", async (req, res) => {

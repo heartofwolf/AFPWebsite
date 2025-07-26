@@ -9,6 +9,7 @@ export const galleries = pgTable("galleries", {
   slug: text("slug").notNull().unique(),
   description: text("description"),
   coverImage: text("cover_image"),
+  heroImage: text("hero_image"),
   order: integer("order").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow(),
 });

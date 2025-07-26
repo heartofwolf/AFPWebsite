@@ -52,7 +52,7 @@ export default function GalleryGrid() {
             <Link key={gallery.id} href={`/gallery/${gallery.slug}`}>
               <div className="gallery-card aspect-square cursor-pointer">
                 <img
-                  src={galleryImages[gallery.slug as keyof typeof galleryImages] || galleryImages.fashion}
+                  src={gallery.heroImage || galleryImages[gallery.slug as keyof typeof galleryImages] || galleryImages.fashion}
                   alt={`${gallery.name} Photography`}
                   className="w-full h-full object-cover"
                 />
@@ -72,7 +72,7 @@ export default function GalleryGrid() {
             <Link href={`/gallery/${conceptualGallery.slug}`}>
               <div className="gallery-card aspect-[4/1] cursor-pointer">
                 <img
-                  src={galleryImages.conceptual}
+                  src={conceptualGallery.heroImage || galleryImages.conceptual}
                   alt="Conceptual Photography"
                   className="w-full h-full object-cover"
                 />
