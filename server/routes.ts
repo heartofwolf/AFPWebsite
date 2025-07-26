@@ -207,6 +207,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/galleries/:galleryId/photos/reorder", async (req, res) => {
+    try {
+      const { photoIds } = req.body;
+      
+      if (!Array.isArray(photoIds)) {
+        return res.status(400).json({ message: "photoIds must be an array" });
+      }
+
+      // Update order for each photo
+      for (let i = 0; i < photoIds.length; i++) {
+        await storage.updatePhotoOrder(photoIds[i], i);
+      }
+
+      res.json({ message: "Photo order updated successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to reorder photos" });
+    }
+  });
+
   // Admin authentication
   app.post("/api/admin/login", async (req, res) => {
     try {
