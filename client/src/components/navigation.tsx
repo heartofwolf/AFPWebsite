@@ -74,8 +74,8 @@ export default function Navigation({ isScrolled }: NavigationProps) {
         <div className="container mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <Link href="/">
-              <div className="text-2xl font-light text-white tracking-wider cursor-pointer">
-                Adam Fedorowicz
+              <div className="text-2xl text-white cursor-pointer tracking-tight">
+                <span className="font-bold">ADAM FEDOROWICZ</span> <span className="font-light">PHOTOGRAPHY</span>
               </div>
             </Link>
             
