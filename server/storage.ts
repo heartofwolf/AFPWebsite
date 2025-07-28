@@ -103,14 +103,24 @@ export class MemStorage implements IStorage {
 
   async reorderGalleries(galleryIds: string[]): Promise<boolean> {
     try {
+      console.log("Reordering galleries in storage:", galleryIds);
+      console.log("Current galleries:", Array.from(this.galleries.entries()).map(([id, g]) => ({id, name: g.name, order: g.order})));
+      
       galleryIds.forEach((id, index) => {
         const gallery = this.galleries.get(id);
         if (gallery) {
-          this.galleries.set(id, { ...gallery, order: index });
+          const updatedGallery = { ...gallery, order: index };
+          this.galleries.set(id, updatedGallery);
+          console.log(`Updated gallery ${id} (${gallery.name}) to order ${index}`);
+        } else {
+          console.log(`Gallery ${id} not found`);
         }
       });
+      
+      console.log("After reorder:", Array.from(this.galleries.entries()).map(([id, g]) => ({id, name: g.name, order: g.order})));
       return true;
     } catch (error) {
+      console.error("Reorder error in storage:", error);
       return false;
     }
   }

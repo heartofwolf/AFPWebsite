@@ -70,6 +70,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/galleries/reorder", async (req, res) => {
+    try {
+      const { galleryIds } = req.body;
+      console.log("Reordering galleries with IDs:", galleryIds);
+      
+      if (!Array.isArray(galleryIds)) {
+        return res.status(400).json({ message: "galleryIds must be an array" });
+      }
+      
+      const success = await storage.reorderGalleries(galleryIds);
+      console.log("Reorder success:", success);
+      
+      if (!success) {
+        return res.status(500).json({ message: "Failed to reorder galleries" });
+      }
+      res.json({ message: "Galleries reordered successfully" });
+    } catch (error) {
+      console.error("Gallery reorder error:", error);
+      res.status(500).json({ message: "Failed to reorder galleries" });
+    }
+  });
+
   app.put("/api/galleries/:id", async (req, res) => {
     try {
       const gallery = await storage.updateGallery(req.params.id, req.body);
@@ -79,22 +101,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(gallery);
     } catch (error) {
       res.status(500).json({ message: "Failed to update gallery" });
-    }
-  });
-
-  app.put("/api/galleries/reorder", async (req, res) => {
-    try {
-      const { galleryIds } = req.body;
-      if (!Array.isArray(galleryIds)) {
-        return res.status(400).json({ message: "galleryIds must be an array" });
-      }
-      const success = await storage.reorderGalleries(galleryIds);
-      if (!success) {
-        return res.status(500).json({ message: "Failed to reorder galleries" });
-      }
-      res.json({ message: "Galleries reordered successfully" });
-    } catch (error) {
-      res.status(500).json({ message: "Failed to reorder galleries" });
     }
   });
 
