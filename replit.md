@@ -8,6 +8,15 @@ This is a full-stack photography portfolio website for Adam Fedorowicz Photograp
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+**July 28, 2025 - Migration to Replit Environment**
+- Successfully migrated Adam Fedorowicz Photography portfolio from Replit Agent to standard Replit environment
+- Verified all dependencies and packages are correctly installed
+- Confirmed Express server running on port 5000 with Vite development mode
+- Validated gallery management and admin authentication functionality
+- Project is now fully operational and ready for continued development
+
 ## System Architecture
 
 ### Frontend Architecture
