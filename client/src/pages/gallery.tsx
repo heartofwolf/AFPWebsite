@@ -91,7 +91,7 @@ export default function Gallery() {
                 key={photo.id}
                 src={photo.url}
                 alt={photo.originalName}
-                className="w-full h-full object-cover cursor-pointer"
+                className="w-full h-auto object-cover cursor-pointer"
                 loading="lazy"
                 onClick={() => {
                   setModalPhoto(photo);
