@@ -253,9 +253,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "photoIds must be an array" });
       }
 
-      // Update order for each photo
-      for (let i = 0; i < photoIds.length; i++) {
-        await storage.updatePhotoOrder(photoIds[i], i);
+      const success = await storage.reorderPhotos(req.params.galleryId, photoIds);
+      if (!success) {
+        return res.status(500).json({ message: "Failed to reorder photos" });
       }
 
       res.json({ message: "Photo order updated successfully" });

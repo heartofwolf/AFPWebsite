@@ -27,6 +27,13 @@ Preferred communication style: Simple, everyday language.
 - Made hamburger menu always visible on mobile devices
 - Improved Express route ordering to fix gallery reordering API endpoints
 
+**July 28, 2025 - Database Migration & Data Persistence**
+- Migrated from in-memory storage to PostgreSQL database using Drizzle ORM
+- Created database connection and migration system with automated schema updates
+- Implemented DatabaseStorage class replacing MemStorage for permanent data persistence
+- All photos, galleries, and admin settings now persist across server restarts
+- Fixed data loss issue where uploaded photos disappeared on page reload
+
 ## System Architecture
 
 ### Frontend Architecture
