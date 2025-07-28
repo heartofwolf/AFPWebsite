@@ -73,21 +73,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/galleries/reorder", async (req, res) => {
     try {
       const { galleryIds } = req.body;
-      console.log("Reordering galleries with IDs:", galleryIds);
       
       if (!Array.isArray(galleryIds)) {
         return res.status(400).json({ message: "galleryIds must be an array" });
       }
       
       const success = await storage.reorderGalleries(galleryIds);
-      console.log("Reorder success:", success);
       
       if (!success) {
         return res.status(500).json({ message: "Failed to reorder galleries" });
       }
       res.json({ message: "Galleries reordered successfully" });
     } catch (error) {
-      console.error("Gallery reorder error:", error);
       res.status(500).json({ message: "Failed to reorder galleries" });
     }
   });

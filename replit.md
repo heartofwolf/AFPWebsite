@@ -17,6 +17,16 @@ Preferred communication style: Simple, everyday language.
 - Validated gallery management and admin authentication functionality
 - Project is now fully operational and ready for continued development
 
+**July 28, 2025 - Enhanced Admin Features & UI Improvements**
+- Added homepage background photo upload and management in admin portal
+- Implemented drag-and-drop gallery reordering with visual feedback
+- Added gallery rename functionality with inline editing
+- Fixed photo grid margins for consistent spacing across all gallery photos
+- Integrated Sharp image optimization for automatic photo compression and resizing
+- Fixed navigation dropdown hover issues by adjusting positioning
+- Made hamburger menu always visible on mobile devices
+- Improved Express route ordering to fix gallery reordering API endpoints
+
 ## System Architecture
 
 ### Frontend Architecture
