@@ -18,8 +18,8 @@ export default function Navigation({ isScrolled }: NavigationProps) {
   });
 
   useEffect(() => {
-    // Close mobile menu when scrolling to home section (not scrolled)
-    if (!isScrolled && isMobileMenuOpen) {
+    // Close mobile menu when scrolling to home section (not scrolled) - only on desktop
+    if (!isScrolled && isMobileMenuOpen && window.innerWidth >= 768) {
       setIsMobileMenuOpen(false);
     }
   }, [isScrolled, isMobileMenuOpen]);
@@ -30,9 +30,11 @@ export default function Navigation({ isScrolled }: NavigationProps) {
       if (isMobileMenuOpen) {
         const mobileMenu = document.querySelector('.mobile-menu');
         const hamburgerButton = document.querySelector('[data-hamburger-button]');
+        const hamburgerButtonDesktop = document.querySelector('[data-hamburger-button-desktop]');
         
         if (mobileMenu && !mobileMenu.contains(event.target as Node) && 
-            hamburgerButton && !hamburgerButton.contains(event.target as Node)) {
+            hamburgerButton && !hamburgerButton.contains(event.target as Node) &&
+            hamburgerButtonDesktop && !hamburgerButtonDesktop.contains(event.target as Node)) {
           setIsMobileMenuOpen(false);
         }
       }
@@ -128,8 +130,18 @@ export default function Navigation({ isScrolled }: NavigationProps) {
       {/* Hamburger Menu Button */}
       <Button
         data-hamburger-button
-        className={`fixed top-5 right-5 z-[100] bg-black bg-opacity-80 backdrop-blur-md rounded-full p-3 text-white hover:text-gold hover:bg-opacity-90 transition-all duration-300 shadow-lg md:opacity-0 md:invisible ${
-          isScrolled ? 'md:opacity-100 md:visible' : ''
+        className="fixed top-5 right-5 z-[100] bg-black bg-opacity-80 backdrop-blur-md rounded-full p-3 text-white hover:text-gold hover:bg-opacity-90 transition-all duration-300 shadow-lg md:hidden"
+        size="icon"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+      >
+        <Menu className="h-6 w-6" />
+      </Button>
+
+      {/* Desktop Hamburger Button - appears when scrolled */}
+      <Button
+        data-hamburger-button-desktop
+        className={`fixed top-5 right-5 z-[100] bg-black bg-opacity-80 backdrop-blur-md rounded-full p-3 text-white hover:text-gold hover:bg-opacity-90 transition-all duration-300 shadow-lg hidden md:block ${
+          isScrolled ? 'opacity-100 visible' : 'opacity-0 invisible'
         }`}
         size="icon"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -139,12 +151,6 @@ export default function Navigation({ isScrolled }: NavigationProps) {
 
       {/* Mobile Menu */}
       <div className={`mobile-menu ${isMobileMenuOpen ? 'active' : ''}`} onClick={(e) => e.stopPropagation()}>
-        <Button
-          className="absolute top-6 right-6 text-white hover:text-gold text-2xl bg-transparent border-none p-0 z-[101]"
-          onClick={() => setIsMobileMenuOpen(false)}
-        >
-          <X className="h-8 w-8" />
-        </Button>
         
         <div className="space-y-6">
           <div className="text-xl font-light text-white mb-8">Gallery</div>
