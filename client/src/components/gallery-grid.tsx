@@ -52,11 +52,11 @@ export default function GalleryGrid() {
             <div key={rowIdx} className="flex gap-0">
               {row.map((gallery) => (
                 <Link key={gallery.id} href={`/gallery/${gallery.slug}`} className="flex-1">
-                  <div className="gallery-card cursor-pointer group relative hover:z-20">
+                  <div className="gallery-card aspect-square cursor-pointer group relative hover:z-20">
                     <img
                       src={gallery.heroImage || defaultImage}
                       alt={`${gallery.name} Photography`}
-                      className="w-full h-auto object-cover"
+                      className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 flex items-center justify-center z-10 group-hover:bg-neutral-800 group-hover:bg-opacity-50 transition-colors duration-300">
                       <h3 className="text-white text-2xl md:text-3xl font-light tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -68,7 +68,7 @@ export default function GalleryGrid() {
               ))}
               {/* Fill remaining columns with invisible placeholders to maintain layout */}
               {Array.from({ length: 3 - colCount }).map((_, idx) => (
-                <div key={idx} className="flex-1 invisible" />
+                <div key={idx} className="flex-1 aspect-square invisible" />
               ))}
             </div>
           );
