@@ -220,7 +220,7 @@
   height: 100vh;
   background: rgba(0,0,0,0.95);
   backdrop-filter: blur(10px);
-  z-index: 999;
+  z-index: 99;
   transition: right 0.3s ease;
   padding: 80px 30px 30px;
   overflow-y: auto;
