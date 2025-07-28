@@ -57,13 +57,13 @@ export default function ContactSection() {
                   <Mail className="text-gold text-xl" />
                   <span>adam@fedorowiczphotography.com</span>
                 </div>
-                <div className="flex items-center space-x-4">
+                {/* <div className="flex items-center space-x-4">
                   <Phone className="text-gold text-xl" />
-                  <span>+1 (555) 123-4567</span>
-                </div>
+                  <span>+(+45) 92909283</span>
+                </div> */}
                 <div className="flex items-center space-x-4">
                   <MapPin className="text-gold text-xl" />
-                  <span>New York, NY / Los Angeles, CA</span>
+                  <span>Aarhus DK</span>
                 </div>
               </div>
             </div>

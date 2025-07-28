@@ -41,12 +41,7 @@ export default function AboutSection() {
                 that great photography happens when preparation meets inspiration.
               </p>
               <div className="pt-6">
-                <Button
-                  onClick={scrollToContact}
-                  className="bg-black text-white px-8 py-3 hover:bg-gold transition-colors duration-300 tracking-wide"
-                >
-                  Get In Touch
-                </Button>
+
               </div>
             </div>
           </div>

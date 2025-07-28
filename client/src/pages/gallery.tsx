@@ -1,10 +1,24 @@
+
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, ChevronDown } from "lucide-react";
+import { ArrowLeft, ChevronDown, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { type Gallery as GalleryType, type Photo } from "@shared/schema";
+import { useState, useCallback, useEffect } from "react";
 
 export default function Gallery() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalPhoto, setModalPhoto] = useState<Photo | null>(null);
+
+  // Close modal on Escape key
+  useEffect(() => {
+    if (!modalOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setModalOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [modalOpen]);
   const { slug } = useParams();
 
   const { data: gallery, isLoading: galleryLoading } = useQuery<GalleryType>({
@@ -44,7 +58,7 @@ export default function Gallery() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white flex flex-col">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-black bg-opacity-90 backdrop-blur-md">
         <div className="container mx-auto px-6 py-6">
@@ -62,7 +76,7 @@ export default function Gallery() {
       </header>
 
       {/* Photo Grid */}
-      <div className="pt-24">
+      <div className="pt-24 flex-1 flex flex-col">
         {photosLoading ? (
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
@@ -71,14 +85,18 @@ export default function Gallery() {
             </div>
           </div>
         ) : photos && photos.length > 0 ? (
-          <div className="photo-grid">
+          <div className="photo-grid bg-black">
             {photos.map((photo) => (
               <img
                 key={photo.id}
                 src={photo.url}
                 alt={photo.originalName}
-                className="cursor-pointer hover:scale-105 transition-transform duration-300"
+                className="w-full h-full object-cover cursor-pointer"
                 loading="lazy"
+                onClick={() => {
+                  setModalPhoto(photo);
+                  setModalOpen(true);
+                }}
               />
             ))}
           </div>
@@ -91,6 +109,26 @@ export default function Gallery() {
           </div>
         )}
       </div>
+
+      {/* Fullscreen Modal for Photo */}
+      {modalOpen && modalPhoto && (
+        <div className="fixed inset-0 z-[100] bg-black bg-opacity-95 flex items-center justify-center" onClick={() => setModalOpen(false)}>
+          <div className="relative w-full h-full flex items-center justify-center" onClick={e => e.stopPropagation()}>
+            <img
+              src={modalPhoto.url}
+              alt={modalPhoto.originalName}
+              className="max-h-[95vh] max-w-full object-contain mx-auto"
+            />
+            <button
+              className="fixed top-8 right-8 text-white bg-black bg-opacity-60 rounded-full p-2 hover:bg-opacity-90"
+              onClick={() => setModalOpen(false)}
+              aria-label="Close"
+            >
+              <X className="h-8 w-8" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Scroll to top button */}
       <Button

@@ -7,14 +7,8 @@ export default function GalleryGrid() {
     queryKey: ["/api/galleries"],
   });
 
-  // Stock photography URLs for gallery hero images
-  const galleryImages = {
-    fashion: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=800",
-    beauty: "https://images.unsplash.com/photo-1487412912498-0447578fcca8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=800",
-    travel: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=800",
-    portrait: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=800",
-    conceptual: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=800"
-  };
+  // Default image if gallery has no heroImage
+  const defaultImage = "https://images.unsplash.com/photo-1469334031218-e382a71b716b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=800";
 
   if (isLoading) {
     return (
@@ -36,55 +30,49 @@ export default function GalleryGrid() {
     );
   }
 
-  const firstFourGalleries = galleries?.slice(0, 4) || [];
-  const conceptualGallery = galleries?.find(g => g.slug === 'conceptual');
+
+  // Split galleries into rows of 3
+  const galleryRows: Gallery[][] = [];
+  if (galleries && galleries.length > 0) {
+    for (let i = 0; i < galleries.length; i += 3) {
+      galleryRows.push(galleries.slice(i, i + 3));
+    }
+  }
 
   return (
     <section id="galleries" className="py-20">
       <div className="container mx-auto">
         <h2 className="text-4xl md:text-6xl font-light text-center mb-16 tracking-wider">
-          Collections
+          Gallery
         </h2>
-        
-        {/* First row - 4 galleries */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-0">
-          {firstFourGalleries.map((gallery) => (
-            <Link key={gallery.id} href={`/gallery/${gallery.slug}`}>
-              <div className="gallery-card aspect-square cursor-pointer">
-                <img
-                  src={gallery.heroImage || galleryImages[gallery.slug as keyof typeof galleryImages] || galleryImages.fashion}
-                  alt={`${gallery.name} Photography`}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <h3 className="text-white text-2xl md:text-3xl font-light tracking-wider opacity-0 hover:opacity-100 transition-opacity duration-300">
-                    {gallery.name}
-                  </h3>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-        
-        {/* Second row - Conceptual gallery (full width) */}
-        {conceptualGallery && (
-          <div className="mt-0">
-            <Link href={`/gallery/${conceptualGallery.slug}`}>
-              <div className="gallery-card aspect-[4/1] cursor-pointer">
-                <img
-                  src={conceptualGallery.heroImage || galleryImages.conceptual}
-                  alt="Conceptual Photography"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <h3 className="text-white text-3xl md:text-5xl font-light tracking-wider opacity-0 hover:opacity-100 transition-opacity duration-300">
-                    {conceptualGallery.name}
-                  </h3>
-                </div>
-              </div>
-            </Link>
-          </div>
-        )}
+        {galleryRows.map((row, rowIdx) => {
+          const colCount = row.length;
+          // Use flex to ensure all items have the same height, and fill empty columns with invisible placeholders
+          return (
+            <div key={rowIdx} className="flex gap-0">
+              {row.map((gallery) => (
+                <Link key={gallery.id} href={`/gallery/${gallery.slug}`} className="flex-1">
+                  <div className="gallery-card aspect-square cursor-pointer group relative hover:z-20">
+                    <img
+                      src={gallery.heroImage || defaultImage}
+                      alt={`${gallery.name} Photography`}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center z-10 group-hover:bg-neutral-800 group-hover:bg-opacity-50 transition-colors duration-300">
+                      <h3 className="text-white text-2xl md:text-3xl font-light tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        {gallery.name}
+                      </h3>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+              {/* Fill remaining columns with invisible placeholders to keep row height consistent */}
+              {Array.from({ length: 3 - colCount }).map((_, idx) => (
+                <div key={idx} className="flex-1 aspect-square invisible" />
+              ))}
+            </div>
+          );
+        })}
       </div>
     </section>
   );

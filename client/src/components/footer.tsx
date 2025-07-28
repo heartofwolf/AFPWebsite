@@ -20,13 +20,7 @@ export default function Footer() {
             >
               <Facebook />
             </a>
-            <a 
-              href="#" 
-              className="text-white hover:text-gold text-2xl transition-colors"
-              aria-label="Twitter"
-            >
-              <Twitter />
-            </a>
+
             <a 
               href="#" 
               className="text-white hover:text-gold text-2xl transition-colors"
@@ -36,7 +30,7 @@ export default function Footer() {
             </a>
           </div>
           <div className="text-white text-center">
-            <p>&copy; 2024 Adam Fedorowicz Photography. All rights reserved.</p>
+            <p>&copy; 2025 Adam Fedorowicz Photography. All rights reserved.</p>
           </div>
         </div>
       </div>
