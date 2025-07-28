@@ -161,6 +161,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(400).json({ message: "No files uploaded" });
         }
 
+        // Get current photos count for ordering
+        const existingPhotos = await storage.getPhotosByGallery(req.params.galleryId);
+        let currentOrder = existingPhotos.length;
+
         const photos = [];
         for (const file of req.files) {
           // Optimize the image using Sharp
@@ -186,14 +190,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
             filename: optimizedFilename,
             originalName: file.originalname,
             url: `/uploads/${optimizedFilename}`,
-            order: Date.now(), // Use timestamp for initial ordering
+            order: currentOrder++,
           };
+          
+          console.log("Creating photo with data:", photoData);
           const photo = await storage.createPhoto(photoData);
           photos.push(photo);
         }
 
         res.status(201).json(photos);
       } catch (error) {
+        console.error("Photo upload error:", error);
         res.status(500).json({ message: "Failed to upload photos" });
       }
     });
