@@ -5,6 +5,7 @@ import LoginForm from "@/components/admin/login-form";
 import GalleryManagement from "@/components/admin/gallery-management";
 import PhotoManagement from "@/components/admin/photo-management";
 import PasswordChange from "@/components/admin/password-change";
+import HomepagePhotoManagement from "@/components/admin/homepage-photo";
 import { Link } from "wouter";
 import { ArrowLeft } from "lucide-react";
 
@@ -64,6 +65,7 @@ export default function Admin() {
         <div className="grid lg:grid-cols-2 gap-8">
           <div className="space-y-8">
             <GalleryManagement />
+            <HomepagePhotoManagement />
             <PasswordChange />
           </div>
           <PhotoManagement />

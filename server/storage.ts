@@ -8,6 +8,7 @@ export interface IStorage {
   getGalleryBySlug(slug: string): Promise<Gallery | undefined>;
   createGallery(gallery: InsertGallery): Promise<Gallery>;
   updateGallery(id: string, gallery: Partial<Gallery>): Promise<Gallery | undefined>;
+  reorderGalleries(galleryIds: string[]): Promise<boolean>;
   deleteGallery(id: string): Promise<boolean>;
   
   // Photo methods
@@ -21,6 +22,8 @@ export interface IStorage {
   // Admin settings methods
   getAdminSetting(key: string): Promise<AdminSettings | undefined>;
   setAdminSetting(setting: InsertAdminSettings): Promise<AdminSettings>;
+  getHomepagePhoto(): Promise<string | undefined>;
+  setHomepagePhoto(photoUrl: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -71,6 +74,9 @@ export class MemStorage implements IStorage {
     const gallery: Gallery = {
       ...insertGallery,
       id,
+      description: insertGallery.description || null,
+      coverImage: insertGallery.coverImage || null,
+      heroImage: insertGallery.heroImage || null,
       order: insertGallery.order || 0,
       createdAt: new Date(),
     };
@@ -93,6 +99,20 @@ export class MemStorage implements IStorage {
     photos.forEach(photo => this.photos.delete(photo.id));
     
     return this.galleries.delete(id);
+  }
+
+  async reorderGalleries(galleryIds: string[]): Promise<boolean> {
+    try {
+      galleryIds.forEach((id, index) => {
+        const gallery = this.galleries.get(id);
+        if (gallery) {
+          this.galleries.set(id, { ...gallery, order: index });
+        }
+      });
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
   async getPhotosByGallery(galleryId: string): Promise<Photo[]> {
@@ -153,6 +173,20 @@ export class MemStorage implements IStorage {
     };
     this.adminSettings.set(setting.key, adminSetting);
     return adminSetting;
+  }
+
+  async getHomepagePhoto(): Promise<string | undefined> {
+    const setting = await this.getAdminSetting("homepage_photo");
+    return setting?.value;
+  }
+
+  async setHomepagePhoto(photoUrl: string): Promise<boolean> {
+    try {
+      await this.setAdminSetting({ key: "homepage_photo", value: photoUrl });
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }
 

@@ -6,6 +6,7 @@ import { insertGallerySchema, insertPhotoSchema } from "@shared/schema";
 import multer from "multer";
 import path from "path";
 import { promises as fs } from "fs";
+import sharp from "sharp";
 
 // Configure multer for file uploads
 const upload = multer({
@@ -81,6 +82,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/galleries/reorder", async (req, res) => {
+    try {
+      const { galleryIds } = req.body;
+      if (!Array.isArray(galleryIds)) {
+        return res.status(400).json({ message: "galleryIds must be an array" });
+      }
+      const success = await storage.reorderGalleries(galleryIds);
+      if (!success) {
+        return res.status(500).json({ message: "Failed to reorder galleries" });
+      }
+      res.json({ message: "Galleries reordered successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to reorder galleries" });
+    }
+  });
+
   app.delete("/api/galleries/:id", async (req, res) => {
     try {
       const success = await storage.deleteGallery(req.params.id);
@@ -143,11 +160,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         const photos = [];
         for (const file of req.files) {
+          // Optimize the image using Sharp
+          const optimizedFilename = `optimized_${file.filename}`;
+          const optimizedPath = path.join(process.cwd(), "uploads", optimizedFilename);
+          
+          await sharp(file.path)
+            .resize(2400, 2400, { 
+              fit: 'inside', 
+              withoutEnlargement: true 
+            })
+            .jpeg({ 
+              quality: 85, 
+              progressive: true 
+            })
+            .toFile(optimizedPath);
+
+          // Delete the original file
+          await fs.unlink(file.path);
+
           const photoData = {
             galleryId: req.params.galleryId,
-            filename: file.filename,
+            filename: optimizedFilename,
             originalName: file.originalname,
-            url: `/uploads/${file.filename}`,
+            url: `/uploads/${optimizedFilename}`,
             order: Date.now(), // Use timestamp for initial ordering
           };
           const photo = await storage.createPhoto(photoData);
@@ -255,6 +290,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       res.status(500).json({ message: "Failed to change password" });
     }
+  });
+
+  // Homepage photo management
+  app.get("/api/admin/homepage-photo", async (req, res) => {
+    try {
+      const photoUrl = await storage.getHomepagePhoto();
+      res.json({ photoUrl: photoUrl || null });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get homepage photo" });
+    }
+  });
+
+  app.post("/api/admin/homepage-photo", (req: any, res: any) => {
+    upload.single('photo')(req, res, async (err: any) => {
+      if (err) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+          return res.status(400).json({ message: "File too large. Maximum size is 50MB." });
+        }
+        return res.status(400).json({ message: err.message || "Upload failed" });
+      }
+
+      try {
+        if (!req.file) {
+          return res.status(400).json({ message: "No file uploaded" });
+        }
+
+        // Optimize the image using Sharp
+        const optimizedFilename = `homepage_${Date.now()}_${req.file.filename}`;
+        const optimizedPath = path.join(process.cwd(), "uploads", optimizedFilename);
+        
+        await sharp(req.file.path)
+          .resize(1920, 1080, { 
+            fit: 'cover', 
+            position: 'center' 
+          })
+          .jpeg({ 
+            quality: 90, 
+            progressive: true 
+          })
+          .toFile(optimizedPath);
+
+        // Delete the original file
+        await fs.unlink(req.file.path);
+
+        const photoUrl = `/uploads/${optimizedFilename}`;
+        await storage.setHomepagePhoto(photoUrl);
+
+        res.json({ photoUrl });
+      } catch (error) {
+        res.status(500).json({ message: "Failed to upload homepage photo" });
+      }
+    });
   });
 
   const httpServer = createServer(app);

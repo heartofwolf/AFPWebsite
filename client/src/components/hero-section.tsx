@@ -1,7 +1,6 @@
 
 import { ChevronDown } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { type Gallery } from "@shared/schema";
 
 export default function HeroSection() {
   const scrollToGalleries = () => {
@@ -11,17 +10,18 @@ export default function HeroSection() {
     }
   };
 
-  // Fetch galleries and find the 'Nude' gallery
-  const { data: galleries } = useQuery<Gallery[]>({ queryKey: ["/api/galleries"] });
-  const nudeGallery = galleries?.find((g: Gallery) => g.slug === 'nude');
-  const heroImage = nudeGallery?.heroImage;
+  // Fetch homepage photo from admin settings
+  const { data: homepageData } = useQuery<{ photoUrl: string | null }>({
+    queryKey: ["/api/admin/homepage-photo"],
+  });
+  const heroImage = homepageData?.photoUrl;
 
   return (
     <section className="hero-section relative w-full h-screen overflow-hidden">
       {heroImage && (
         <img
           src={heroImage}
-          alt="Nude Gallery Hero"
+          alt="Portfolio Hero"
           className="absolute inset-0 w-full h-full object-cover z-0"
         />
       )}

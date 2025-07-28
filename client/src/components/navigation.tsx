@@ -63,7 +63,7 @@ export default function Navigation({ isScrolled }: NavigationProps) {
                   Gallery
                 </button>
                 {showDropdown && galleries && (
-                  <div className="absolute top-full left-0 mt-2 bg-black bg-opacity-90 backdrop-blur-md rounded-lg p-4 min-w-[200px] opacity-100 visible transform translate-y-0 transition-all duration-300">
+                  <div className="absolute top-full left-0 mt-1 bg-black bg-opacity-90 backdrop-blur-md rounded-lg p-4 min-w-[200px] opacity-100 visible transform translate-y-0 transition-all duration-300">
                     {galleries.map((gallery) => (
                       <Link key={gallery.id} href={`/gallery/${gallery.slug}`}>
                         <div className="block text-white hover:text-gold py-2 transition-colors cursor-pointer">
@@ -101,9 +101,7 @@ export default function Navigation({ isScrolled }: NavigationProps) {
 
       {/* Hamburger Menu Button */}
       <Button
-        className={`fixed top-5 right-5 z-[1000] bg-white bg-opacity-10 backdrop-blur-md rounded-full p-3 text-white hover:text-gold transition-all duration-300 ${
-          isScrolled ? 'opacity-100 visible' : 'opacity-0 invisible'
-        }`}
+        className={`fixed top-5 right-5 z-[1000] bg-white bg-opacity-20 backdrop-blur-md rounded-full p-3 text-white hover:text-gold transition-all duration-300 md:hidden`}
         size="icon"
         onClick={() => setIsMobileMenuOpen(true)}
       >
