@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 import { Mail, Phone, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -10,7 +10,6 @@ export default function ContactSection() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    projectType: "",
     message: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,7 +27,7 @@ export default function ContactSection() {
       description: "Thank you for your inquiry. I'll get back to you soon.",
     });
 
-    setFormData({ name: "", email: "", projectType: "", message: "" });
+    setFormData({ name: "", email: "", message: "" });
     setIsSubmitting(false);
   };
 
@@ -85,22 +84,6 @@ export default function ContactSection() {
                 required
                 className="focus:border-gold"
               />
-              
-              <Select 
-                value={formData.projectType} 
-                onValueChange={(value) => handleInputChange("projectType", value)}
-              >
-                <SelectTrigger className="focus:border-gold">
-                  <SelectValue placeholder="Project Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="fashion">Fashion Shoot</SelectItem>
-                  <SelectItem value="beauty">Beauty Photography</SelectItem>
-                  <SelectItem value="portrait">Portrait Session</SelectItem>
-                  <SelectItem value="commercial">Commercial Work</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
               
               <Textarea
                 placeholder="Tell me about your project..."
