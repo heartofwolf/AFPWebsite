@@ -59,11 +59,11 @@ export default function Navigation({ isScrolled }: NavigationProps) {
                 onMouseEnter={() => setShowDropdown(true)}
                 onMouseLeave={() => setShowDropdown(false)}
               >
-                <button className="nav-link text-white hover:text-gold font-light tracking-wide pb-2">
+                <button className="nav-link text-white hover:text-gold font-light tracking-wide pb-1">
                   Gallery
                 </button>
                 {showDropdown && galleries && (
-                  <div className="absolute top-full left-0 -mt-2 bg-black bg-opacity-90 backdrop-blur-md rounded-lg p-4 min-w-[200px] opacity-100 visible transform translate-y-0 transition-all duration-300 pt-6">
+                  <div className="absolute top-full left-0 mt-1 bg-black bg-opacity-90 backdrop-blur-md rounded-lg p-4 min-w-[200px] opacity-100 visible transform translate-y-0 transition-all duration-300">
                     {galleries.map((gallery) => (
                       <Link key={gallery.id} href={`/gallery/${gallery.slug}`}>
                         <div className="block text-white hover:text-gold py-2 transition-colors cursor-pointer">
