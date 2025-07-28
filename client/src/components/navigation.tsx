@@ -128,11 +128,11 @@ export default function Navigation({ isScrolled }: NavigationProps) {
       {/* Hamburger Menu Button */}
       <Button
         data-hamburger-button
-        className={`fixed top-5 right-5 z-[1000] bg-black bg-opacity-80 backdrop-blur-md rounded-full p-3 text-white hover:text-gold hover:bg-opacity-90 transition-all duration-300 shadow-lg md:opacity-0 md:invisible ${
+        className={`fixed top-5 right-5 z-[1001] bg-black bg-opacity-80 backdrop-blur-md rounded-full p-3 text-white hover:text-gold hover:bg-opacity-90 transition-all duration-300 shadow-lg md:opacity-0 md:invisible ${
           isScrolled ? 'md:opacity-100 md:visible' : ''
         }`}
         size="icon"
-        onClick={() => setIsMobileMenuOpen(true)}
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
       >
         <Menu className="h-6 w-6" />
       </Button>
