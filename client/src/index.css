@@ -223,6 +223,7 @@
   z-index: 999;
   transition: right 0.3s ease;
   padding: 80px 30px 30px;
+  overflow-y: auto;
 }
 
 .mobile-menu.active {

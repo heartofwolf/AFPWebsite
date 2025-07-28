@@ -18,16 +18,42 @@ export default function Navigation({ isScrolled }: NavigationProps) {
   });
 
   useEffect(() => {
+    // Close mobile menu when scrolling to home section (not scrolled)
+    if (!isScrolled && isMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+    }
+  }, [isScrolled, isMobileMenuOpen]);
+
+  // Handle click outside to close menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isMobileMenuOpen) {
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const hamburgerButton = document.querySelector('[data-hamburger-button]');
+        
+        if (mobileMenu && !mobileMenu.contains(event.target as Node) && 
+            hamburgerButton && !hamburgerButton.contains(event.target as Node)) {
+          setIsMobileMenuOpen(false);
+        }
+      }
+    };
+
     if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
+      document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
-      document.body.style.overflow = 'auto';
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isMobileMenuOpen]);
+
+  // Remove body overflow restriction to allow page scrolling
+  useEffect(() => {
+    // Allow body to scroll normally - removed overflow restriction
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -101,6 +127,7 @@ export default function Navigation({ isScrolled }: NavigationProps) {
 
       {/* Hamburger Menu Button */}
       <Button
+        data-hamburger-button
         className={`fixed top-5 right-5 z-[1000] bg-black bg-opacity-80 backdrop-blur-md rounded-full p-3 text-white hover:text-gold hover:bg-opacity-90 transition-all duration-300 shadow-lg ${
           isScrolled ? 'opacity-100 visible' : 'opacity-0 invisible md:opacity-0 md:invisible'
         }`}
@@ -111,7 +138,7 @@ export default function Navigation({ isScrolled }: NavigationProps) {
       </Button>
 
       {/* Mobile Menu */}
-      <div className={`mobile-menu ${isMobileMenuOpen ? 'active' : ''}`}>
+      <div className={`mobile-menu ${isMobileMenuOpen ? 'active' : ''}`} onClick={(e) => e.stopPropagation()}>
         <Button
           className="absolute top-6 right-6 text-white hover:text-gold text-2xl bg-transparent border-none p-0"
           onClick={() => setIsMobileMenuOpen(false)}
