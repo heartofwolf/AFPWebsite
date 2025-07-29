@@ -91,7 +91,7 @@ export default function Navigation({ isScrolled }: NavigationProps) {
                   Gallery
                 </button>
                 {showDropdown && galleries && (
-                  <div className="absolute top-full left-0 mt-1 bg-black bg-opacity-90 backdrop-blur-md rounded-lg p-4 min-w-[200px] opacity-100 visible transform translate-y-0 transition-all duration-300">
+                  <div className="absolute top-full -left-1 bg-black bg-opacity-60 backdrop-blur-md rounded-lg p-4 min-w-[200px] opacity-100 visible transform translate-y-0 transition-all duration-300">
                     {galleries.map((gallery) => (
                       <Link key={gallery.id} href={`/gallery/${gallery.slug}`}>
                         <div className="block text-white hover:text-gold py-2 transition-colors cursor-pointer">
@@ -140,7 +140,7 @@ export default function Navigation({ isScrolled }: NavigationProps) {
       {/* Desktop Hamburger Button - appears when scrolled */}
       <Button
         data-hamburger-button-desktop
-        className={`fixed top-5 right-5 z-[100] bg-black bg-opacity-80 backdrop-blur-md rounded-full p-3 text-white hover:text-gold hover:bg-opacity-90 transition-all duration-300 shadow-lg hidden md:block ${
+        className={`fixed top-5 right-5 z-[100] bg-black bg-opacity-40 backdrop-blur-md rounded-full p-3 text-white hover:text-gold hover:bg-opacity-90 transition-all duration-300 shadow-lg hidden md:block ${
           isScrolled ? 'opacity-100 visible' : 'opacity-0 invisible'
         }`}
         size="icon"

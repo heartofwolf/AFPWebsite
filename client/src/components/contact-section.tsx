@@ -86,7 +86,7 @@ export default function ContactSection() {
               />
               
               <Textarea
-                placeholder="Tell me about your project..."
+                placeholder="Your Message"
                 rows={5}
                 value={formData.message}
                 onChange={(e) => handleInputChange("message", e.target.value)}

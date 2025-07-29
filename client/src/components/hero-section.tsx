@@ -25,15 +25,15 @@ export default function HeroSection() {
           className="absolute inset-0 w-full h-full object-cover z-0"
         />
       )}
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white animate-fade-in z-10 bg-black bg-opacity-40">
-        <h1 className="text-6xl md:text-8xl font-light mb-6 tracking-wider">
-          Photography
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white  bg-black bg-opacity-40">
+        <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight opacity-60">
+          ADAM FEDOROWICZ
         </h1>
-        <p className="text-xl md:text-2xl font-light tracking-wide opacity-90">
-          Capturing moments that tell stories
+        <p className="text-xl md:text-3xl font-light tracking-tight opacity-60">
+          PHOTOGRAPHY
         </p>
       </div>
-      <button 
+      <button
         onClick={scrollToGalleries}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 scroll-indicator cursor-pointer hover:text-gold transition-colors z-20"
       >

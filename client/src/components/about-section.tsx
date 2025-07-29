@@ -18,14 +18,14 @@ export default function AboutSection() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="animate-slide-up">
               <img
-                src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600"
+                src="/Uploads/me.jpg"
                 alt="Adam Fedorowicz Photography"
                 className="rounded-lg shadow-lg w-full"
               />
             </div>
             <div className="animate-slide-up space-y-6">
               <p className="text-lg leading-relaxed text-gray-700">
-                My journey into photography began over a decade ago, starting with a simple 
+                My journey into photography began over two decades ago, starting with a simple 
                 curiosity about capturing light and emotion. What began as a hobby quickly 
                 evolved into a passionate pursuit of visual storytelling.
               </p>
@@ -35,11 +35,7 @@ export default function AboutSection() {
                 story. Each session is a collaboration, where technical expertise meets 
                 creative vision.
               </p>
-              <p className="text-lg leading-relaxed text-gray-700">
-                Based between major fashion capitals, my work has been featured in 
-                international publications and exhibited in galleries worldwide. I believe 
-                that great photography happens when preparation meets inspiration.
-              </p>
+
               <div className="pt-6">
 
               </div>
