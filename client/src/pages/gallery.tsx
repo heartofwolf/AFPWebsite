@@ -1,10 +1,9 @@
-
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ChevronDown, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { type Gallery as GalleryType, type Photo } from "@shared/schema";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 export default function Gallery() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -19,6 +18,7 @@ export default function Gallery() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [modalOpen]);
+
   const { slug } = useParams();
 
   const { data: gallery, isLoading: galleryLoading } = useQuery<GalleryType>({
@@ -70,7 +70,7 @@ export default function Gallery() {
               </Button>
             </Link>
             <h1 className="text-2xl font-light tracking-wider">{gallery.name}</h1>
-            <div className="w-32"></div> {/* Spacer for centering */}
+            <div className="w-32"></div> {/* Spacer */}
           </div>
         </div>
       </header>
@@ -110,14 +110,18 @@ export default function Gallery() {
         )}
       </div>
 
-      {/* Fullscreen Modal for Photo */}
+      {/* Fullscreen Modal */}
       {modalOpen && modalPhoto && (
-        <div className="fixed inset-0 z-[100] bg-black bg-opacity-95 flex items-center justify-center" onClick={() => setModalOpen(false)}>
-          <div className="relative w-full h-full flex items-center justify-center" onClick={e => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-[100] bg-black bg-opacity-95 flex items-center justify-center"
+          onClick={() => setModalOpen(false)}
+        >
+          <div className="relative w-full h-full flex items-center justify-center">
             <img
               src={modalPhoto.url}
               alt={modalPhoto.originalName}
-              className="max-h-[95vh] max-w-full object-contain mx-auto"
+              className="max-h-[95vh] max-w-full object-contain mx-auto cursor-pointer"
+              onClick={() => setModalOpen(false)}
             />
             <button
               className="fixed top-8 right-8 text-white bg-black bg-opacity-60 rounded-full p-2 hover:bg-opacity-90"
@@ -130,11 +134,11 @@ export default function Gallery() {
         </div>
       )}
 
-      {/* Scroll to top button */}
+      {/* Scroll to top */}
       <Button
         className="fixed bottom-8 right-8 rounded-full bg-gold hover:bg-gold-light text-black"
         size="icon"
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       >
         <ChevronDown className="h-4 w-4 rotate-180" />
       </Button>
